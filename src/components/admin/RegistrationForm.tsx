@@ -1,0 +1,152 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { Plus } from 'lucide-react';
+
+interface RegistrationFormProps {
+  onSuccess: () => void;
+  // Props pro režim úpravy (editace existující domény)
+  editData?: {
+    domain: string;
+    name: string;
+    id: string;
+    isDemo: boolean;
+  } | null;
+  onCancelEdit?: () => void;
+}
+
+export default function RegistrationForm({ onSuccess, editData, onCancelEdit }: RegistrationFormProps) {
+  const [newDomain, setNewDomain] = useState('');
+  const [newName, setNewName] = useState('');
+  const [newId, setNewId] = useState('');
+  const [newIsDemo, setNewIsDemo] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const isEditing = !!editData;
+
+  // Když se změní editData (klikneme na "Upravit"), naplníme formulář
+  useEffect(() => {
+    if (editData) {
+      setNewDomain(editData.domain);
+      setNewName(editData.name);
+      setNewId(editData.id);
+      setNewIsDemo(editData.isDemo || false);
+    } else {
+      setNewDomain('');
+      setNewName('');
+      setNewId('');
+      setNewIsDemo(false);
+    }
+  }, [editData]);
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newDomain || !newName || !newId) return;
+
+    setIsSubmitting(true);
+    try {
+      await fetch('/api/advisors', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          domain: newDomain,
+          id: newId,
+          name: newName,
+          role: 'Vázaný zástupce 4fin',
+          photoUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80',
+          email: `${newName.split(' ')[0].toLowerCase()}@4fin.cz`,
+          phone: '+420 000 000 000',
+          isDemo: newIsDemo
+        })
+      });
+
+      // Vyresetujeme formulář po úspěšném odeslání, pokud neupravujeme
+      if (!isEditing) {
+        setNewDomain('');
+        setNewName('');
+        setNewId('');
+        setNewIsDemo(false);
+      }
+      
+      onSuccess(); // Obnoví data v rodiči
+    } catch (error) {
+      console.error('Chyba při ukládání:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="glass-panel p-6">
+      <h2 className="text-xl font-bold flex items-center gap-2 mb-6">
+        <Plus className="text-[#D9005B]" /> {isEditing ? 'Úprava domény' : 'Registrace domény'}
+      </h2>
+      <form onSubmit={handleRegister} className="space-y-4">
+        <div>
+          <label className="block text-xs font-semibold text-[#888888] uppercase tracking-wider mb-2">Doména (bez https://)</label>
+          <input 
+            type="text" 
+            required
+            value={newDomain}
+            onChange={e => setNewDomain(e.target.value)}
+            disabled={isEditing || isSubmitting}
+            placeholder="např. novy-poradce.cz" 
+            className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D9005B] focus:ring-1 focus:ring-[#D9005B] outline-none text-white transition-all disabled:opacity-50"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-semibold text-[#888888] uppercase tracking-wider mb-2">Jméno poradce</label>
+          <input 
+            type="text" 
+            required
+            value={newName}
+            onChange={e => setNewName(e.target.value)}
+            disabled={isSubmitting}
+            placeholder="např. Jan Novák" 
+            className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D9005B] focus:ring-1 focus:ring-[#D9005B] outline-none text-white transition-all"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-semibold text-[#888888] uppercase tracking-wider mb-2">ID poradce (4fin)</label>
+          <input 
+            type="text" 
+            required
+            value={newId}
+            onChange={e => setNewId(e.target.value)}
+            disabled={isSubmitting}
+            placeholder="např. 4F-12345" 
+            className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D9005B] focus:ring-1 focus:ring-[#D9005B] outline-none text-white transition-all"
+          />
+        </div>
+        <div className="flex items-center gap-2 pt-2 pb-2">
+          <input 
+            type="checkbox" 
+            id="isDemo"
+            checked={newIsDemo}
+            onChange={e => setNewIsDemo(e.target.checked)}
+            disabled={isSubmitting}
+            className="w-4 h-4 bg-black/50 border-white/10 rounded accent-[#D9005B]"
+          />
+          <label htmlFor="isDemo" className="text-sm text-[#888888] cursor-pointer hover:text-white transition-colors">
+            Jedná se o ukázkový web (nezapočítává se do statistik)
+          </label>
+        </div>
+        <div className="flex gap-2 mt-2">
+          <button type="submit" disabled={isSubmitting} className="flex-1 bg-[#D9005B] hover:bg-[#D9005B]/80 text-white font-bold py-3 rounded-xl transition-colors disabled:opacity-50 flex justify-center">
+            {isSubmitting ? 'Ukládám...' : (isEditing ? 'Uložit změny' : 'Přidat do Whitelistu')}
+          </button>
+          {isEditing && (
+            <button 
+              type="button" 
+              onClick={onCancelEdit}
+              disabled={isSubmitting}
+              className="px-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl transition-colors disabled:opacity-50"
+            >
+              Zrušit
+            </button>
+          )}
+        </div>
+      </form>
+    </div>
+  );
+}

@@ -1,0 +1,102 @@
+{
+  "localhost": {
+    "id": "4F-99999",
+    "name": "Testovací Poradce",
+    "role": "Vázaný zástupce 4fin",
+    "photoUrl": "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80",
+    "email": "test@4fin.cz",
+    "phone": "+420 000 000 000"
+  },
+  "jannovak.cz": {
+    "id": "4F-10293",
+    "name": "Jan Novák",
+    "role": "Vázaný zástupce 4fin",
+    "photoUrl": "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80",
+    "email": "jan.novak@4fin.cz",
+    "phone": "+420 123 456 789"
+  },
+  "petr-dvorak-finance.cz": {
+    "id": "4F-11024",
+    "name": "Petr Dvořák",
+    "role": "Vázaný zástupce 4fin",
+    "photoUrl": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80",
+    "email": "petr.dvorak@4fin.cz",
+    "phone": "+420 987 654 321"
+  },
+  "finance-svobodova.cz": {
+    "id": "4F-22841",
+    "name": "Lucie Svobodová",
+    "role": "Vázaný zástupce 4fin",
+    "photoUrl": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80",
+    "email": "lucie.svobodova@4fin.cz",
+    "phone": "+420 603 111 222"
+  },
+  "tomas-kucera.cz": {
+    "id": "4F-39102",
+    "name": "Tomáš Kučera",
+    "role": "Vázaný zástupce 4fin",
+    "photoUrl": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80",
+    "email": "tomas.kucera@4fin.cz",
+    "phone": "+420 777 888 999"
+  },
+  "nemcova-poradenstvi.cz": {
+    "id": "4F-45091",
+    "name": "Eva Němcová",
+    "role": "Vázaný zástupce 4fin",
+    "photoUrl": "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80",
+    "email": "eva.nemcova@4fin.cz",
+    "phone": "+420 608 555 444"
+  },
+  "martin-vesely-4fin.cz": {
+    "id": "4F-88213",
+    "name": "Martin Veselý",
+    "role": "Vázaný zástupce 4fin",
+    "photoUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80",
+    "email": "martin.vesely@4fin.cz",
+    "phone": "+420 733 222 111"
+  },
+  "anna-prochazkova.cz": {
+    "id": "4F-91022",
+    "name": "Anna Procházková",
+    "role": "Vázaný zástupce 4fin",
+    "photoUrl": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80",
+    "email": "anna.prochazkova@4fin.cz",
+    "phone": "+420 724 666 777"
+  },
+  "standart.4fin.inflexion.cz": {
+    "id": "4F-1111",
+    "name": "Standart plán",
+    "role": "Vázaný zástupce 4fin",
+    "photoUrl": "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80",
+    "email": "standart@4fin.cz",
+    "phone": "+420 000 000 000",
+    "isDemo": true
+  },
+  "silver.4fin.inflexion.cz": {
+    "id": "4F-2222",
+    "name": "Silver plan",
+    "role": "Vázaný zástupce 4fin",
+    "photoUrl": "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80",
+    "email": "silver@4fin.cz",
+    "phone": "+420 000 000 000",
+    "isDemo": true
+  },
+  "gold.4fin.inflexion.cz": {
+    "id": "4F-3333",
+    "name": "Gold plán",
+    "role": "Vázaný zástupce 4fin",
+    "photoUrl": "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80",
+    "email": "gold@4fin.cz",
+    "phone": "+420 000 000 000",
+    "isDemo": true
+  },
+  "platinum.4fin.inflexion.cz": {
+    "id": "4F-4444",
+    "name": "Platinum plán",
+    "role": "Vázaný zástupce 4fin",
+    "photoUrl": "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80",
+    "email": "platinum@4fin.cz",
+    "phone": "+420 000 000 000",
+    "isDemo": true
+  }
+}

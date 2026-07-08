@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Inflexion Trust API & SecOps Admin
 
-## Getting Started
+Enterprise-grade API a administrátorský panel pro ověřování identit finančních poradců a evidenci bezpečnostních hrozeb (Phishing, Scam). Aplikace slouží jako backendová páteř pro bezpečné rozšíření do prohlížeče (Chrome Extension).
 
-First, run the development server:
+## 🚀 Hlavní funkce
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Ověřování domén (`/api/verify`):** Rychlý endpoint pro ověření, zda webová stránka patří certifikovanému poradci.
+- **Reporting hrozeb (`/api/report`):** Veřejný endpoint pro nahlašování podvodných domén s automatickým notifikačním systémem.
+- **SecOps Admin Panel (`/admin`):** Zabezpečené rozhraní pro správu nahlášených hrozeb a auditní logy.
+- **Honeypot Systém:** Automatická detekce a klamání útočníků při pokusu o zneužití API.
+- **Automatická údržba:** Cron joby pro odstraňování nepotvrzených hrozeb a starých PII údajů (GDPR compliance).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🔒 Bezpečnostní a Enterprise Vrstvy (Agentic Engineering)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Aplikace byla navržena s důrazem na absolutní bezpečnost a "Fail-Fast" architekturu:
+- **Zod Validace:** Striktní typová kontrola na všech veřejných i privátních endpointech (žádný neočekávaný vstup se nedostane do systému).
+- **Rate Limiting:** Globální i specifické omezování požadavků proti DDoS a Brute-force útokům (postavené pro Redis).
+- **JWT Autentizace:** Přísné zabezpečení administrátorské zóny pomocí JSON Web Tokenů a HttpOnly cookies.
+- **Bezpečnostní hlavičky (Security Headers):** HSTS, prevence clickjackingu a MIME-sniffingu (`helmet` ekvivalent pro Next.js).
+- **Fail-Fast Secrets:** Pokud v produkci chybí důležité klíče, aplikace agresivně spadne, aby předešla běhu v nezabezpečeném stavu s fallback hesly.
+- **Redis Caching & Sentry:** (Připraveno) Infrastruktura navržená pro cachování odpovědí a okamžitý error tracking.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ Technologie
 
-## Learn More
+- **Framework:** [Next.js 14](https://nextjs.org/) (App Router)
+- **Jazyk:** TypeScript
+- **Stylování:** Tailwind CSS
+- **Testování:** Vitest (Unit testy) & Playwright (E2E testy)
+- **E-maily:** Resend API
 
-To learn more about Next.js, take a look at the following resources:
+## 🚦 Spuštění pro vývoj (Local Development)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Instalace závislostí:**
+   ```bash
+   npm install
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. **Proměnné prostředí:**
+   Zkopírujte `.env.example` do `.env.local` a vyplňte potřebné klíče.
+   ```bash
+   cp .env.example .env.local
+   ```
+   *Poznámka: Bez platného `JWT_SECRET` a `RESEND_API_KEY` aplikace v produkčním režimu nenastartuje!*
 
-## Deploy on Vercel
+3. **Spuštění serveru:**
+   ```bash
+   npm run dev
+   ```
+   Aplikace poběží na `http://localhost:3000`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🧪 Testování
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Unit testy:** `npm run test`
+- **E2E testy (Playwright):** `npm run test:e2e`
+
+## 📦 Nasazení (Deployment)
+
+Aplikace je plně připravena pro nasazení na [Vercel](https://vercel.com).
+Po nasazení je nutné v administraci Vercelu nakonfigurovat produkční Environment Variables.

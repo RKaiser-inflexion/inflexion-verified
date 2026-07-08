@@ -1,0 +1,18 @@
+[
+  {
+    "id": "log_1783449785320_vzzpqh6",
+    "timestamp": "2026-07-07T18:43:05.320Z",
+    "type": "LOGIN_SUCCESS",
+    "ip": "::1",
+    "username": "RKaiser",
+    "details": "Úspěšné přihlášení"
+  },
+  {
+    "id": "log_1783449785172_vb3m41s",
+    "timestamp": "2026-07-07T18:43:05.172Z",
+    "type": "USER_CREATED",
+    "ip": "127.0.0.1",
+    "username": "RKaiser",
+    "details": "Vytvořen uživatel RKaiser s rolí superadmin"
+  }
+]

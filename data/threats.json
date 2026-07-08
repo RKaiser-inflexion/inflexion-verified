@@ -1,0 +1,27 @@
+[
+  {
+    "domain": "localhost:3000",
+    "ip": "::1",
+    "status": "RESOLVED",
+    "source": "BEAR_TRAP",
+    "id": "TR-7HTN40UKB",
+    "timestamp": "2026-07-08T13:01:39.591Z"
+  },
+  {
+    "domain": "localhost:3000",
+    "ip": "::1",
+    "status": "RESOLVED",
+    "source": "BEAR_TRAP",
+    "id": "TR-NAQMT9P1P",
+    "timestamp": "2026-07-08T13:01:39.512Z"
+  },
+  {
+    "domain": "https://4fin-prikladpodvod.cz",
+    "ip": "::1",
+    "status": "PENDING",
+    "source": "MANUAL_REPORT",
+    "description": "testujeme:)",
+    "id": "TR-3YI9PDP1I",
+    "timestamp": "2026-07-06T18:48:22.802Z"
+  }
+]
