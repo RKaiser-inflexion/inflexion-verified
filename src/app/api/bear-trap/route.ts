@@ -9,11 +9,12 @@ export async function POST(request: Request) {
     const ip = request.headers.get('x-forwarded-for') || '127.0.0.1';
 
     // Přidání do perzistentní databáze
-    const threat = addThreat({
+    const threat = await addThreat({
       domain,
       ip,
       status: 'BLOCKED',
-      source: 'BEAR_TRAP'
+      source: 'BEAR_TRAP',
+      description: 'Záchyt z pastí na Inflexion Verified (Honeypot)'
     });
 
     console.log('\n');

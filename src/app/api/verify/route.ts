@@ -47,8 +47,8 @@ export async function GET(request: Request) {
     }
   }
 
-  // 2. Fallback na JSON DB
-  const advisors = getAdvisors();
+  // 2. Fallback na Postgres DB
+  const advisors = await getAdvisors();
   const advisor = advisors[cleanDomain as keyof typeof advisors];
 
   let responseData;
@@ -56,7 +56,7 @@ export async function GET(request: Request) {
   if (advisor) {
     // Zaznamenání analytiky
     if (!advisor.isDemo) {
-      logApiCall();
+      await logApiCall();
     }
     
     responseData = {

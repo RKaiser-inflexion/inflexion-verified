@@ -11,12 +11,17 @@ function checkAuth() {
 export async function GET() {
   if (!checkAuth()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   
-  const users = getUsers().map(u => ({
-    username: u.username,
-    role: u.role,
-    createdAt: u.createdAt
-  }));
-  return NextResponse.json(users);
+  try {
+    const users = await getUsers();
+    const safeUsers = users.map(u => ({
+      username: u.username,
+      role: u.role,
+      createdAt: u.createdAt
+    }));
+    return NextResponse.json(safeUsers);
+  } catch (error: any) {
+    return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
+  }
 }
 
 export async function POST(request: Request) {

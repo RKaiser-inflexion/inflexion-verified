@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // Uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // Uses a direct connection
+}
+
+model Advisor {
+  domain   String  @id
+  id       String  @unique
+  name     String
+  role     String
+  photoUrl String
+  email    String
+  phone    String
+  isDemo   Boolean @default(false)
+}
+
+model Threat {
+  id          String   @id
+  domain      String
+  ip          String
+  timestamp   DateTime @default(now())
+  status      String   // 'BLOCKED' | 'PENDING' | 'RESOLVED'
+  source      String   // 'BEAR_TRAP' | 'MANUAL_REPORT'
+  description String?
+}
+
+model Analytics {
+  date  String @id // Format: YYYY-MM-DD
+  count Int    @default(0)
+}
+
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  role         String   // 'superadmin' | 'admin'
+  createdAt    DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  timestamp DateTime @default(now())
+  type      String   // 'LOGIN_SUCCESS' | 'LOGIN_FAILED' | 'IP_BLOCKED' | 'USER_CREATED'
+  ip        String
+  username  String?
+  details   String?
+}
+
+model RateLimit {
+  ip           String    @id
+  attempts     Int       @default(0)
+  blockedUntil DateTime?
+}

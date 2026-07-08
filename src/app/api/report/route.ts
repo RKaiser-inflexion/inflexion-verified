@@ -21,8 +21,8 @@ export async function POST(request: Request) {
     const { url, description } = parsed.data;
     const ip = request.headers.get('x-forwarded-for') || '127.0.0.1';
 
-    // Přísný rate limit: max 5 hlášení za minutu
-    const rl = checkApiRateLimit(`report_${ip}`, 5, 60 * 1000);
+    // 1. Zkontrolujeme Rate Limit formuláře
+    const rl = await checkApiRateLimit(ip, 10, 60 * 1000); // Max 10 reportů za minutu per IP
     if (!rl.success) {
       return NextResponse.json({ error: 'Too Many Requests' }, { status: 429 });
     }
@@ -31,12 +31,12 @@ export async function POST(request: Request) {
     await new Promise((resolve) => setTimeout(resolve, 2500));
 
     // Přidání do DB
-    const threat = addThreat({
+    const threat = await addThreat({
       domain: url,
       ip,
       status: 'PENDING',
       source: 'MANUAL_REPORT',
-      description
+      description: description || 'Nahlášeno uživatelem přes formulář.'
     });
 
     console.log(`[Trust API - BE] Přijato hlášení o podvodu na URL: ${url}`);

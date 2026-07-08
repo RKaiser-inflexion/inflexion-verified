@@ -3,9 +3,9 @@ import { getAdvisors } from '@/lib/db';
 import { ShieldCheck, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 
-export default function VerifyPage({ params }: { params: { domain: string } }) {
+export default async function VerifyPage({ params }: { params: { domain: string } }) {
   const cleanDomain = decodeURIComponent(params.domain).replace(/^www\./, '').split(':')[0];
-  const advisors = getAdvisors();
+  const advisors = await getAdvisors();
   const advisor = advisors[cleanDomain as keyof typeof advisors];
 
   if (!advisor) {

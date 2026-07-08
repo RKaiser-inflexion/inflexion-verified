@@ -10,7 +10,7 @@ export async function GET() {
   }
 
   try {
-    const threats = getThreats();
+    const threats = await getThreats();
     return NextResponse.json(threats);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch threats' }, { status: 500 });
@@ -38,8 +38,8 @@ export async function PATCH(request: Request) {
 
     const { id, status } = parsed.data;
 
-    updateThreatStatus(id, status);
-    return NextResponse.json({ success: true });
+    await updateThreatStatus(id, status);
+    return NextResponse.json({ success: true, message: 'Status upraven.' });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to update threat' }, { status: 500 });
   }

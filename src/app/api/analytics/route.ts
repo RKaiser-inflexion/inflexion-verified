@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getAnalytics } from '@/lib/db';
 
 export async function GET() {
-  const analyticsData = getAnalytics();
+  const analyticsData = await getAnalytics();
   
   // Připravíme data pro Recharts - pole za posledních 30 dní
   const data = [];

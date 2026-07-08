@@ -4,9 +4,9 @@ import { ShieldCheck, Database, Users, AlertOctagon, ChevronRight } from 'lucide
 import Link from 'next/link';
 import SearchBar from '@/components/SearchBar';
 
-export default function Home() {
-  const advisorsData = getAdvisors();
-  const threatsData = getThreats();
+export default async function Home() {
+  const advisorsData = await getAdvisors();
+  const threatsData = await getThreats();
   
   const allAdvisorsList = Object.entries(advisorsData).filter(([domain]) => domain !== 'localhost' && domain !== '127.0.0.1');
   

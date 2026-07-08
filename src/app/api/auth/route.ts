@@ -9,16 +9,16 @@ export async function POST(request: Request) {
   try {
     const ip = request.headers.get('x-forwarded-for') || '127.0.0.1';
     
-    // 1. Zkontrolujeme Rate Limits
-    const rateLimit = checkRateLimit(ip);
+    // 1. Zkontrolovat Rate Limit (5 pokusů za hodinu per IP)
+    const rateLimit = await checkRateLimit(ip);
     if (!rateLimit.allowed) {
       return NextResponse.json({ 
         error: `Příliš mnoho pokusů. Vaše IP byla zablokována. Zkuste to za ${rateLimit.waitTimeMinutes} minut.` 
       }, { status: 429 });
     }
 
-    // 2. Inicializujeme superadmina, pokud ještě neexistuje
-    initializeAdminFromEnv();
+    // 2. Inicializace administrátora (spustí se jen pokud je DB prázdná)
+    await initializeAdminFromEnv();
 
     const rawData = await request.json();
     
@@ -35,11 +35,11 @@ export async function POST(request: Request) {
     const { username, password } = parsed.data;
 
     // 3. Najdeme uživatele
-    const user = findUserByUsername(username);
+    const user = await findUserByUsername(username);
     if (!user) {
       // Bezpečnostní zpoždění proti útokům (časování)
       await new Promise(r => setTimeout(r, 1000));
-      recordFailedLogin(ip, username);
+      await recordFailedLogin(ip, username);
       return NextResponse.json({ error: 'Neplatné přihlašovací údaje' }, { status: 401 });
     }
 
@@ -49,12 +49,12 @@ export async function POST(request: Request) {
     if (!passwordMatch) {
       // Záměrné zpoždění proti brute-force
       await new Promise(r => setTimeout(r, 1000));
-      recordFailedLogin(ip, username);
+      await recordFailedLogin(ip, username);
       return NextResponse.json({ error: 'Neplatné přihlašovací údaje' }, { status: 401 });
     }
 
     // 5. Zaznamenáme úspěch a vytvoříme cookie s JWT
-    recordSuccessfulLogin(ip, username);
+    await recordSuccessfulLogin(ip, username);
     
     const token = await signJWT({ username: user.username, role: user.role });
     

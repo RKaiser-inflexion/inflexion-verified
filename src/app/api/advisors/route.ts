@@ -8,7 +8,7 @@ export async function GET() {
   if (!session) return NextResponse.json({ error: 'Unauthorized access' }, { status: 401 });
 
   try {
-    const advisors = getAdvisors();
+    const advisors = await getAdvisors();
     return NextResponse.json(advisors);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch advisors' }, { status: 500 });
@@ -39,13 +39,13 @@ export async function POST(request: Request) {
     }
 
     const data = parsed.data;
-    addAdvisor(data.domain, { 
+    await addAdvisor(data.domain, { 
       id: data.id, 
       name: data.name, 
-      role: data.role, 
-      photoUrl: data.photoUrl, 
-      email: data.email, 
-      phone: data.phone, 
+      role: data.role || '', 
+      photoUrl: data.photoUrl || '', 
+      email: data.email || '', 
+      phone: data.phone || '', 
       isDemo: data.isDemo 
     });
 
@@ -67,7 +67,7 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'Chybí doména' }, { status: 400 });
     }
 
-    removeAdvisor(domain);
+    await removeAdvisor(domain);
 
     return NextResponse.json({ success: true, message: 'Doména odstraněna.' });
   } catch (error) {

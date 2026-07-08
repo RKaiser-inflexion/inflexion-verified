@@ -13,7 +13,8 @@ export async function GET(request: Request) {
     }
   }
 
-  const modified = cleanupOldThreats();
+  // Spuštění čistky PII dat
+  const modified = await cleanupOldThreats();
 
   return NextResponse.json({ 
     success: true, 

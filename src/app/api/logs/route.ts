@@ -10,6 +10,6 @@ function checkAuth() {
 export async function GET() {
   if (!checkAuth()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   
-  const logs = getAuditLogs();
+  const logs = await getAuditLogs();
   return NextResponse.json(logs);
 }
