@@ -25,7 +25,7 @@ export default function LogsTab() {
       }
     };
     fetchLogs();
-    const interval = setInterval(fetchLogs, 5000);
+    const interval = setInterval(fetchLogs, 30000);
     return () => clearInterval(interval);
   }, []);
 

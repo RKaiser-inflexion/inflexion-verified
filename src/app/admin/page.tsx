@@ -133,7 +133,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     // Cyklický refresh pouze pokud jsme přihlášeni
     if (isAuthenticated) {
-      const interval = setInterval(() => fetchData(false), 5000);
+      const interval = setInterval(() => fetchData(false), 30000);
       return () => clearInterval(interval);
     }
   }, [isAuthenticated]);
