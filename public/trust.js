@@ -1,7 +1,8 @@
 (function() {
   // Config
-  const API_URL = 'http://localhost:3000/api/verify';
-  const TRUST_PORTAL_URL = 'http://localhost:3000/verify';
+  const API_URL = 'https://inflexion-verified.vercel.app/api/verify';
+  const TRUST_PORTAL_URL = 'https://inflexion-verified.vercel.app/verify';
+  const BEAR_TRAP_URL = 'https://inflexion-verified.vercel.app/api/bear-trap';
   
   const wrapper = document.createElement('div');
   wrapper.id = 'inflexion-trust-badge';
@@ -174,7 +175,7 @@
       } else {
         renderScamBadge();
         // TRIGGER BEAR TRAP (Silent background report)
-        fetch('http://localhost:3000/api/bear-trap', {
+        fetch(BEAR_TRAP_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ domain: currentDomain }),
