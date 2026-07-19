@@ -1,8 +1,12 @@
 (function() {
+  // Dynamicky získáme doménu, odkud byl tento skript načten (např. vercel.app nebo inflexion.cz)
+  const currentScript = document.currentScript;
+  const BASE_URL = currentScript ? new URL(currentScript.src).origin : 'https://inflexion-verified.vercel.app';
+
   // Config
-  const API_URL = 'https://inflexion-verified.vercel.app/api/verify';
-  const TRUST_PORTAL_URL = 'https://inflexion-verified.vercel.app/verify';
-  const BEAR_TRAP_URL = 'https://inflexion-verified.vercel.app/api/bear-trap';
+  const API_URL = `${BASE_URL}/api/verify`;
+  const TRUST_PORTAL_URL = `${BASE_URL}/verify`;
+  const BEAR_TRAP_URL = `${BASE_URL}/api/bear-trap`;
   
   const wrapper = document.createElement('div');
   wrapper.id = 'inflexion-trust-badge';
