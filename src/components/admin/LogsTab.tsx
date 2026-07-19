@@ -14,6 +14,9 @@ interface AuditLog {
 
 export default function LogsTab() {
   const [logs, setLogs] = useState<AuditLog[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const LOGS_PER_PAGE = 20;
 
   useEffect(() => {
     const fetchLogs = async () => {
@@ -29,6 +32,15 @@ export default function LogsTab() {
     return () => clearInterval(interval);
   }, []);
 
+  const filteredLogs = logs.filter(log => 
+    log.ip.includes(searchQuery) || 
+    log.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    log.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    log.details?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  const totalPages = Math.ceil(filteredLogs.length / LOGS_PER_PAGE) || 1;
+  const paginatedLogs = filteredLogs.slice((currentPage - 1) * LOGS_PER_PAGE, currentPage * LOGS_PER_PAGE);
+
   const getLogIcon = (type: string) => {
     switch (type) {
       case 'LOGIN_SUCCESS': return <CheckCircle2 className="text-emerald-500" />;
@@ -41,9 +53,18 @@ export default function LogsTab() {
 
   return (
     <div className="glass-panel p-6 animate-in fade-in">
-      <h2 className="text-xl font-bold flex items-center gap-2 mb-6">
-        <Activity className="text-[#D9005B]" /> Bezpečnostní Logy (Audit)
-      </h2>
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
+        <h2 className="text-xl font-bold flex items-center gap-2">
+          <Activity className="text-[#D9005B]" /> Bezpečnostní Logy (Audit)
+        </h2>
+        <input 
+          type="text" 
+          placeholder="Hledat IP, účet nebo událost..." 
+          value={searchQuery}
+          onChange={e => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+          className="bg-black/50 border border-white/10 rounded-lg px-4 py-2 text-sm outline-none focus:border-[#D9005B] w-full md:w-64"
+        />
+      </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
@@ -56,9 +77,9 @@ export default function LogsTab() {
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
-            {logs.length === 0 ? (
-              <tr><td colSpan={5} className="py-8 text-center text-[#888888]">Žádné záznamy v logu.</td></tr>
-            ) : logs.map(log => (
+            {paginatedLogs.length === 0 ? (
+              <tr><td colSpan={5} className="py-8 text-center text-[#888888]">{searchQuery ? 'Zadanému hledání neodpovídá žádný záznam.' : 'Žádné záznamy v logu.'}</td></tr>
+            ) : paginatedLogs.map(log => (
               <tr key={log.id} className="hover:bg-white/5 transition-colors">
                 <td className="py-4 px-4 text-sm text-[#888888]">
                   {new Date(log.timestamp).toLocaleString('cs-CZ')}
@@ -76,6 +97,23 @@ export default function LogsTab() {
             ))}
           </tbody>
         </table>
+      </div>
+      
+      <div className="mt-6 pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[#888888]">
+        <div>Zobrazeno {paginatedLogs.length} z {filteredLogs.length} logů</div>
+        <div className="flex gap-2">
+          <button 
+            disabled={currentPage === 1} 
+            onClick={() => setCurrentPage(p => p - 1)}
+            className="px-3 py-1.5 bg-white/5 rounded-lg disabled:opacity-50 hover:bg-white/10 transition-colors"
+          >Předchozí</button>
+          <span className="px-3 py-1.5 font-medium">Stránka {currentPage} z {totalPages}</span>
+          <button 
+            disabled={currentPage === totalPages} 
+            onClick={() => setCurrentPage(p => p + 1)}
+            className="px-3 py-1.5 bg-white/5 rounded-lg disabled:opacity-50 hover:bg-white/10 transition-colors"
+          >Další</button>
+        </div>
       </div>
     </div>
   );

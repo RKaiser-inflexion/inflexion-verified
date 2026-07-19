@@ -38,6 +38,20 @@ export default function AdminDashboard() {
   const [advisors, setAdvisors] = useState<Record<string, any>>({});
   const [isLoading, setIsLoading] = useState(true);
   
+  // Whitelist Search & Pagination
+  const [advisorSearch, setAdvisorSearch] = useState('');
+  const [advisorPage, setAdvisorPage] = useState(1);
+  const ADVISORS_PER_PAGE = 20;
+
+  const advisorEntries = Object.entries(advisors);
+  const filteredAdvisors = advisorEntries.filter(([domain, advisor]: any) => 
+    domain.toLowerCase().includes(advisorSearch.toLowerCase()) || 
+    advisor.name?.toLowerCase().includes(advisorSearch.toLowerCase()) ||
+    advisor.id?.toLowerCase().includes(advisorSearch.toLowerCase())
+  );
+  const totalAdvisorPages = Math.ceil(filteredAdvisors.length / ADVISORS_PER_PAGE) || 1;
+  const paginatedAdvisors = filteredAdvisors.slice((advisorPage - 1) * ADVISORS_PER_PAGE, advisorPage * ADVISORS_PER_PAGE);
+  
   // Registration Form State
   const [editData, setEditData] = useState<{domain: string, name: string, id: string, isDemo: boolean} | null>(null);
 
@@ -385,10 +399,17 @@ export default function AdminDashboard() {
 
             {/* Whitelist Table */}
             <div className="glass-panel overflow-hidden flex flex-col mt-8">
-              <div className="p-6 border-b border-white/10 flex items-center justify-between">
+              <div className="p-6 border-b border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <h2 className="text-xl font-bold flex items-center gap-2">
                   <Server className="text-emerald-400" /> Whitelist (Aktivní domény)
                 </h2>
+                <input 
+                  type="text" 
+                  placeholder="Hledat doménu, jméno nebo ID..." 
+                  value={advisorSearch}
+                  onChange={e => { setAdvisorSearch(e.target.value); setAdvisorPage(1); }}
+                  className="bg-black/50 border border-white/10 rounded-lg px-4 py-2 text-sm outline-none focus:border-[#D9005B] w-full md:w-64"
+                />
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
@@ -401,12 +422,14 @@ export default function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody className="text-sm">
-                    {Object.keys(advisors).length === 0 && (
+                    {paginatedAdvisors.length === 0 && (
                       <tr>
-                        <td colSpan={4} className="p-8 text-center text-[#888888]">Žádné domény ve whitelistu.</td>
+                        <td colSpan={4} className="p-8 text-center text-[#888888]">
+                          {advisorSearch ? 'Zadanému hledání neodpovídá žádná doména.' : 'Žádné domény ve whitelistu.'}
+                        </td>
                       </tr>
                     )}
-                    {Object.entries(advisors).map(([domain, advisor]: any) => (
+                    {paginatedAdvisors.map(([domain, advisor]: any) => (
                       <tr key={domain} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
                         <td className="p-4 font-medium text-white">
                           {domain}
@@ -436,6 +459,22 @@ export default function AdminDashboard() {
                     ))}
                   </tbody>
                 </table>
+              </div>
+              <div className="p-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[#888888] bg-black/20">
+                <div>Zobrazeno {paginatedAdvisors.length} z {filteredAdvisors.length} domén</div>
+                <div className="flex gap-2">
+                  <button 
+                    disabled={advisorPage === 1} 
+                    onClick={() => setAdvisorPage(p => p - 1)}
+                    className="px-3 py-1.5 bg-white/5 rounded-lg disabled:opacity-50 hover:bg-white/10 transition-colors"
+                  >Předchozí</button>
+                  <span className="px-3 py-1.5 font-medium">Stránka {advisorPage} z {totalAdvisorPages}</span>
+                  <button 
+                    disabled={advisorPage === totalAdvisorPages} 
+                    onClick={() => setAdvisorPage(p => p + 1)}
+                    className="px-3 py-1.5 bg-white/5 rounded-lg disabled:opacity-50 hover:bg-white/10 transition-colors"
+                  >Další</button>
+                </div>
               </div>
             </div>
 
