@@ -92,7 +92,7 @@ export default function AdminDashboard() {
       });
 
       if (res.ok) {
-        setIsAuthenticated(true);
+        window.location.reload();
       } else {
         setAuthError(true);
       }
