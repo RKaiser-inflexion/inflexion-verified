@@ -8,189 +8,190 @@
   const TRUST_PORTAL_URL = `${BASE_URL}/verify`;
   const BEAR_TRAP_URL = `${BASE_URL}/api/bear-trap`;
   
-  const wrapper = document.createElement('div');
-  wrapper.id = 'inflexion-trust-badge';
-  wrapper.style.position = 'fixed';
-  wrapper.style.bottom = '24px';
-  wrapper.style.right = '24px';
-  wrapper.style.zIndex = '999999';
-  document.body.appendChild(wrapper);
+  function initBadge() {
+    const wrapper = document.createElement('div');
+    wrapper.id = 'inflexion-trust-badge';
+    wrapper.style.position = 'fixed';
+    wrapper.style.bottom = '24px';
+    wrapper.style.right = '24px';
+    wrapper.style.zIndex = '999999';
+    document.body.appendChild(wrapper);
 
-  const style = document.createElement('style');
-  style.innerHTML = `
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
-    .ifx-badge {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 12px 24px 12px 16px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(2, 6, 23, 0.95) 100%);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-top: 1px solid rgba(255, 255, 255, 0.25);
-      color: white;
-      text-decoration: none;
-      box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.1);
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      cursor: pointer;
-      overflow: hidden;
-      position: relative;
-      font-family: 'Outfit', system-ui, sans-serif;
-    }
-    
-    /* Premium Shimmer Effect */
-    .ifx-badge::before {
-      content: '';
-      position: absolute;
-      top: 0; 
-      left: -150%; 
-      width: 150%; 
-      height: 100%;
-      background: linear-gradient(
-        90deg, 
-        transparent 0%, 
-        rgba(255, 255, 255, 0.03) 30%, 
-        rgba(255, 255, 255, 0.25) 50%, 
-        rgba(255, 255, 255, 0.03) 70%, 
-        transparent 100%
-      );
-      transform: skewX(-25deg);
-      animation: ifx-premium-sweep 5s infinite cubic-bezier(0.4, 0, 0.2, 1);
-      pointer-events: none;
-    }
-    
-    @keyframes ifx-premium-sweep {
-      0% { left: -150%; }
-      20% { left: 150%; }
-      100% { left: 150%; }
-    }
-
-    .ifx-badge:hover {
-      transform: translateY(-6px) scale(1.03);
-      background: linear-gradient(135deg, rgba(20, 28, 48, 0.9) 0%, rgba(5, 10, 30, 1) 100%);
-      border-color: rgba(255, 255, 255, 0.3);
-      box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.7), 0 0 30px rgba(16, 185, 129, 0.2);
-    }
-    
-    .ifx-icon-wrapper {
-      position: relative;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 50%;
-      flex-shrink: 0;
-      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-      box-shadow: 0 0 20px rgba(16, 185, 129, 0.4), inset 0 2px 4px rgba(255,255,255,0.3);
-      z-index: 2;
-    }
-    
-    /* Glowing pulse behind the icon */
-    .ifx-icon-wrapper::after {
-      content: '';
-      position: absolute;
-      top: -4px; left: -4px; right: -4px; bottom: -4px;
-      border-radius: 50%;
-      background: #10B981;
-      opacity: 0.3;
-      filter: blur(8px);
-      animation: ifx-pulse 2s infinite ease-in-out;
-      z-index: -1;
-    }
-    
-    @keyframes ifx-pulse {
-      0% { transform: scale(0.9); opacity: 0.5; }
-      50% { transform: scale(1.1); opacity: 0.2; }
-      100% { transform: scale(0.9); opacity: 0.5; }
-    }
-
-    .ifx-icon-wrapper.scam {
-      background: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%);
-      box-shadow: 0 0 20px rgba(239, 68, 68, 0.4), inset 0 2px 4px rgba(255,255,255,0.3);
-    }
-    .ifx-icon-wrapper.scam::after {
-      background: #EF4444;
-      animation: ifx-pulse-scam 1s infinite ease-in-out;
-    }
-    @keyframes ifx-pulse-scam {
-      0% { transform: scale(0.9); opacity: 0.8; }
-      50% { transform: scale(1.3); opacity: 0.1; }
-      100% { transform: scale(0.9); opacity: 0.8; }
-    }
-    
-    .ifx-content {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      z-index: 2;
-    }
-    
-    .ifx-title {
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: 0.2px;
-      margin: 0 0 3px 0;
-      line-height: 1.1;
-      background: linear-gradient(to right, #ffffff, #a7f3d0);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    
-    .ifx-time {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11.5px;
-      color: #94a3b8;
-      margin: 0;
-      font-weight: 500;
-      letter-spacing: 0.5px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    
-    /* Small live indicator dot */
-    .ifx-live-dot {
-      width: 6px;
-      height: 6px;
-      background-color: #10B981;
-      border-radius: 50%;
-      box-shadow: 0 0 8px #10B981;
-      animation: ifx-blink 1s infinite;
-    }
-    @keyframes ifx-blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-  `;
-  document.head.appendChild(style);
-
-  // Fetch verification
-  const currentDomain = window.location.hostname + (window.location.port ? ':' + window.location.port : '');
-  
-  fetch(`${API_URL}?domain=${encodeURIComponent(currentDomain)}`)
-    .then(res => res.json())
-    .then(data => {
-      if (data.status === 'verified') {
-        renderVerifiedBadge(data.advisor);
-      } else {
-        renderScamBadge();
-        // TRIGGER BEAR TRAP (Silent background report)
-        fetch(BEAR_TRAP_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ domain: currentDomain }),
-          // keepalive ensures the request finishes even if the user closes the page immediately
-          keepalive: true
-        }).catch(() => {});
+      .ifx-badge {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 12px 24px 12px 16px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(2, 6, 23, 0.95) 100%);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-top: 1px solid rgba(255, 255, 255, 0.25);
+        color: white;
+        text-decoration: none;
+        box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+        overflow: hidden;
+        position: relative;
+        font-family: 'Outfit', system-ui, sans-serif;
       }
-    })
-    .catch(err => {
-      console.error('Inflexion Verified API Error:', err);
-    });
+      
+      /* Premium Shimmer Effect */
+      .ifx-badge::before {
+        content: '';
+        position: absolute;
+        top: 0; 
+        left: -150%; 
+        width: 150%; 
+        height: 100%;
+        background: linear-gradient(
+          90deg, 
+          transparent 0%, 
+          rgba(255, 255, 255, 0.03) 30%, 
+          rgba(255, 255, 255, 0.25) 50%, 
+          rgba(255, 255, 255, 0.03) 70%, 
+          transparent 100%
+        );
+        transform: skewX(-25deg);
+        animation: ifx-premium-sweep 5s infinite cubic-bezier(0.4, 0, 0.2, 1);
+        pointer-events: none;
+      }
+      
+      @keyframes ifx-premium-sweep {
+        0% { left: -150%; }
+        20% { left: 150%; }
+        100% { left: 150%; }
+      }
+
+      .ifx-badge:hover {
+        transform: translateY(-6px) scale(1.03);
+        background: linear-gradient(135deg, rgba(20, 28, 48, 0.9) 0%, rgba(5, 10, 30, 1) 100%);
+        border-color: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.7), 0 0 30px rgba(16, 185, 129, 0.2);
+      }
+      
+      .ifx-icon-wrapper {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        flex-shrink: 0;
+        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.4), inset 0 2px 4px rgba(255,255,255,0.3);
+        z-index: 2;
+      }
+      
+      /* Glowing pulse behind the icon */
+      .ifx-icon-wrapper::after {
+        content: '';
+        position: absolute;
+        top: -4px; left: -4px; right: -4px; bottom: -4px;
+        border-radius: 50%;
+        background: #10B981;
+        opacity: 0.3;
+        filter: blur(8px);
+        animation: ifx-pulse 2s infinite ease-in-out;
+        z-index: -1;
+      }
+      
+      @keyframes ifx-pulse {
+        0% { transform: scale(0.9); opacity: 0.5; }
+        50% { transform: scale(1.1); opacity: 0.2; }
+        100% { transform: scale(0.9); opacity: 0.5; }
+      }
+
+      .ifx-icon-wrapper.scam {
+        background: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%);
+        box-shadow: 0 0 20px rgba(239, 68, 68, 0.4), inset 0 2px 4px rgba(255,255,255,0.3);
+      }
+      .ifx-icon-wrapper.scam::after {
+        background: #EF4444;
+        animation: ifx-pulse-scam 1s infinite ease-in-out;
+      }
+      @keyframes ifx-pulse-scam {
+        0% { transform: scale(0.9); opacity: 0.8; }
+        50% { transform: scale(1.3); opacity: 0.1; }
+        100% { transform: scale(0.9); opacity: 0.8; }
+      }
+      
+      .ifx-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        z-index: 2;
+      }
+      
+      .ifx-title {
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+        margin: 0 0 3px 0;
+        line-height: 1.1;
+        background: linear-gradient(to right, #ffffff, #a7f3d0);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      
+      .ifx-time {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11.5px;
+        color: #94a3b8;
+        margin: 0;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      
+      /* Small live indicator dot */
+      .ifx-live-dot {
+        width: 6px;
+        height: 6px;
+        background-color: #10B981;
+        border-radius: 50%;
+        box-shadow: 0 0 8px #10B981;
+        animation: ifx-blink 1s infinite;
+      }
+      @keyframes ifx-blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Fetch verification
+    const currentDomain = window.location.hostname + (window.location.port ? ':' + window.location.port : '');
+    
+    fetch(`${API_URL}?domain=${encodeURIComponent(currentDomain)}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'verified') {
+          renderVerifiedBadge(data.advisor, wrapper, currentDomain);
+        } else {
+          renderScamBadge(wrapper);
+          // TRIGGER BEAR TRAP (Silent background report)
+          fetch(BEAR_TRAP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ domain: currentDomain }),
+            keepalive: true
+          }).catch(() => {});
+        }
+      })
+      .catch(err => {
+        console.error('Inflexion Verified API Error:', err);
+      });
+  }
 
   function updateTime(el) {
     const months = ['ledna', 'února', 'března', 'dubna', 'května', 'června', 'července', 'srpna', 'září', 'října', 'listopadu', 'prosince'];
@@ -206,7 +207,7 @@
     refresh();
   }
 
-  function renderVerifiedBadge(advisor) {
+  function renderVerifiedBadge(advisor, wrapper, currentDomain) {
     const a = document.createElement('a');
     a.href = `${TRUST_PORTAL_URL}/${encodeURIComponent(currentDomain)}`;
     a.target = '_blank';
@@ -227,7 +228,7 @@
     updateTime(document.getElementById('ifx-clock'));
   }
 
-  function renderScamBadge() {
+  function renderScamBadge(wrapper) {
     const div = document.createElement('div');
     div.className = 'ifx-badge';
     div.style.background = 'linear-gradient(135deg, rgba(69, 10, 10, 0.95) 0%, rgba(30, 0, 0, 1) 100%)';
@@ -251,5 +252,12 @@
     `;
     
     wrapper.appendChild(div);
+  }
+
+  // Handle initialization timing
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initBadge);
+  } else {
+    initBadge();
   }
 })();
