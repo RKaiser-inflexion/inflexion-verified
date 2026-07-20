@@ -2,6 +2,7 @@
   // Dynamicky získáme doménu, odkud byl tento skript načten (např. vercel.app nebo inflexion.cz)
   const currentScript = document.currentScript;
   const BASE_URL = currentScript ? new URL(currentScript.src).origin : 'https://inflexion-verified.vercel.app';
+  const position = currentScript ? currentScript.getAttribute('data-position') || 'bottom-left' : 'bottom-left';
 
   // Config
   const API_URL = `${BASE_URL}/api/verify`;
@@ -12,9 +13,24 @@
     const wrapper = document.createElement('div');
     wrapper.id = 'inflexion-trust-badge';
     wrapper.style.position = 'fixed';
-    wrapper.style.bottom = '24px';
-    wrapper.style.right = '24px';
     wrapper.style.zIndex = '999999';
+
+    // Aplikace pozice
+    if (position === 'bottom-right') {
+      wrapper.style.bottom = '24px';
+      wrapper.style.right = '24px';
+    } else if (position === 'top-right') {
+      wrapper.style.top = '24px';
+      wrapper.style.right = '24px';
+    } else if (position === 'top-left') {
+      wrapper.style.top = '24px';
+      wrapper.style.left = '24px';
+    } else {
+      // Default: bottom-left
+      wrapper.style.bottom = '24px';
+      wrapper.style.left = '24px';
+    }
+    
     document.body.appendChild(wrapper);
 
     const style = document.createElement('style');
