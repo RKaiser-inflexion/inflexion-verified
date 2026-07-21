@@ -53,7 +53,7 @@ export default function AdminDashboard() {
   const paginatedAdvisors = filteredAdvisors.slice((advisorPage - 1) * ADVISORS_PER_PAGE, advisorPage * ADVISORS_PER_PAGE);
   
   // Registration Form State
-  const [editData, setEditData] = useState<{domain: string, name: string, id: string, isDemo: boolean} | null>(null);
+  const [editData, setEditData] = useState<{domain: string, name: string, id: string, photoUrl?: string, isDemo: boolean} | null>(null);
 
   const handleDeleteDomain = async (domain: string) => {
     if (!confirm(`Opravdu chcete odebrat doménu ${domain} z whitelistu?`)) return;
@@ -74,10 +74,13 @@ export default function AdminDashboard() {
       domain,
       name: advisor.name,
       id: advisor.id,
+      photoUrl: advisor.photoUrl,
       isDemo: advisor.isDemo || false
     });
-    // Posunout okno na formulář
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Posunout okno na formulář, aby uživatel viděl, že se data načetla
+    setTimeout(() => {
+      document.getElementById('registration-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 50);
   };
 
   const handleThreatStatusChange = async (id: string, newStatus: string) => {

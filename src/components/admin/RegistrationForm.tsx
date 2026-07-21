@@ -5,11 +5,11 @@ import { Plus } from 'lucide-react';
 
 interface RegistrationFormProps {
   onSuccess: () => void;
-  // Props pro režim úpravy (editace existující domény)
   editData?: {
     domain: string;
     name: string;
     id: string;
+    photoUrl?: string;
     isDemo: boolean;
   } | null;
   onCancelEdit?: () => void;
@@ -19,6 +19,7 @@ export default function RegistrationForm({ onSuccess, editData, onCancelEdit }: 
   const [newDomain, setNewDomain] = useState('');
   const [newName, setNewName] = useState('');
   const [newId, setNewId] = useState('');
+  const [newPhotoUrl, setNewPhotoUrl] = useState('');
   const [newIsDemo, setNewIsDemo] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -30,11 +31,13 @@ export default function RegistrationForm({ onSuccess, editData, onCancelEdit }: 
       setNewDomain(editData.domain);
       setNewName(editData.name);
       setNewId(editData.id);
+      setNewPhotoUrl(editData.photoUrl || '');
       setNewIsDemo(editData.isDemo || false);
     } else {
       setNewDomain('');
       setNewName('');
       setNewId('');
+      setNewPhotoUrl('');
       setNewIsDemo(false);
     }
   }, [editData]);
@@ -53,7 +56,7 @@ export default function RegistrationForm({ onSuccess, editData, onCancelEdit }: 
           id: newId,
           name: newName,
           role: 'Vázaný zástupce 4fin',
-          photoUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80',
+          photoUrl: newPhotoUrl || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80',
           email: `${newName.split(' ')[0].toLowerCase()}@4fin.cz`,
           phone: '+420 000 000 000',
           isDemo: newIsDemo
@@ -65,6 +68,7 @@ export default function RegistrationForm({ onSuccess, editData, onCancelEdit }: 
         setNewDomain('');
         setNewName('');
         setNewId('');
+        setNewPhotoUrl('');
         setNewIsDemo(false);
       }
       
@@ -77,7 +81,7 @@ export default function RegistrationForm({ onSuccess, editData, onCancelEdit }: 
   };
 
   return (
-    <div className="glass-panel p-6">
+    <div id="registration-form" className="glass-panel p-6">
       <h2 className="text-xl font-bold flex items-center gap-2 mb-6">
         <Plus className="text-[#D9005B]" /> {isEditing ? 'Úprava domény' : 'Registrace domény'}
       </h2>
@@ -115,6 +119,17 @@ export default function RegistrationForm({ onSuccess, editData, onCancelEdit }: 
             onChange={e => setNewId(e.target.value)}
             disabled={isSubmitting}
             placeholder="např. 4F-12345" 
+            className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D9005B] focus:ring-1 focus:ring-[#D9005B] outline-none text-white transition-all"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-semibold text-[#888888] uppercase tracking-wider mb-2">Profilová fotka (URL)</label>
+          <input 
+            type="text" 
+            value={newPhotoUrl}
+            onChange={e => setNewPhotoUrl(e.target.value)}
+            disabled={isSubmitting}
+            placeholder="např. https://cdn.4fin.cz/foto.jpg (nepovinné)" 
             className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D9005B] focus:ring-1 focus:ring-[#D9005B] outline-none text-white transition-all"
           />
         </div>
