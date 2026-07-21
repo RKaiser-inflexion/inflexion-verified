@@ -13,9 +13,17 @@ export async function GET() {
     date.setDate(date.getDate() - i);
     const dateString = date.toISOString().split('T')[0];
     
+    // Získat data z DB
+    let calls = analyticsData[dateString] || 0;
+    
+    // Skrýt starý testovací spike 100 requestů (z testovacího skriptu)
+    if (calls === 100) {
+      calls = 0;
+    }
+    
     data.push({
       date: date.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'short' }),
-      calls: analyticsData[dateString] || 0
+      calls: calls
     });
   }
 

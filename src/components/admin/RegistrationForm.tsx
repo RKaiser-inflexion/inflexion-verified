@@ -123,15 +123,64 @@ export default function RegistrationForm({ onSuccess, editData, onCancelEdit }: 
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-[#888888] uppercase tracking-wider mb-2">Profilová fotka (URL)</label>
-          <input 
-            type="text" 
-            value={newPhotoUrl}
-            onChange={e => setNewPhotoUrl(e.target.value)}
-            disabled={isSubmitting}
-            placeholder="např. https://cdn.4fin.cz/foto.jpg (nepovinné)" 
-            className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D9005B] focus:ring-1 focus:ring-[#D9005B] outline-none text-white transition-all"
-          />
+          <label className="block text-xs font-semibold text-[#888888] uppercase tracking-wider mb-2">Profilová fotka</label>
+          <div className="flex gap-4 items-center">
+            {newPhotoUrl && (
+              <img src={newPhotoUrl} alt="Preview" className="w-12 h-12 rounded-full object-cover border border-white/10" />
+            )}
+            <div className="flex-1 space-y-2">
+              <input 
+                type="text" 
+                value={newPhotoUrl.startsWith('data:image') ? 'Nahraný obrázek (Base64)' : newPhotoUrl}
+                onChange={e => setNewPhotoUrl(e.target.value)}
+                disabled={isSubmitting || newPhotoUrl.startsWith('data:image')}
+                placeholder="Vložte URL nebo nahrajte z počítače ->" 
+                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D9005B] outline-none text-white transition-all disabled:opacity-50"
+              />
+              <div className="flex justify-between items-center">
+                {newPhotoUrl.startsWith('data:image') && (
+                  <button type="button" onClick={() => setNewPhotoUrl('')} className="text-xs text-red-500 hover:underline">Odstranit obrázek</button>
+                )}
+              </div>
+            </div>
+            <label className="bg-[#D9005B]/20 hover:bg-[#D9005B]/30 border border-[#D9005B]/50 text-[#D9005B] px-4 py-3 rounded-xl cursor-pointer transition-colors text-sm font-bold whitespace-nowrap">
+              Nahrát fotku
+              <input 
+                type="file" 
+                accept="image/*" 
+                className="hidden" 
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                      const img = new Image();
+                      img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        // Resize to 256x256 max
+                        const MAX_SIZE = 256;
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > height) {
+                          if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
+                        } else {
+                          if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        ctx?.drawImage(img, 0, 0, width, height);
+                        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                        setNewPhotoUrl(dataUrl);
+                      };
+                      img.src = event.target?.result as string;
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                }}
+              />
+            </label>
+          </div>
         </div>
         <div className="flex items-center gap-2 pt-2 pb-2">
           <input 
