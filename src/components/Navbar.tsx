@@ -1,8 +1,11 @@
 import React from 'react';
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, Settings } from 'lucide-react';
 import Link from 'next/link';
+import { cookies } from 'next/headers';
 
 export default function Navbar() {
+  const hasAdminSession = cookies().has('inflexion_secops_session');
+
   return (
     <header className="border-b border-white/10 glass-panel !rounded-none !p-0 !border-x-0 !border-t-0 sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
@@ -16,6 +19,11 @@ export default function Navbar() {
           </div>
         </Link>
         <div className="hidden md:flex items-center gap-8 text-sm font-medium">
+          {hasAdminSession && (
+            <Link href="/admin" className="text-[#D9005B] hover:text-pink-500 transition-colors flex items-center gap-2 bg-[#D9005B]/10 px-4 py-2 rounded-lg border border-[#D9005B]/20">
+              <Settings size={16} /> Administrace
+            </Link>
+          )}
           <Link href="/" className="text-white hover:text-[#D9005B] transition-colors">Databáze</Link>
           <Link href="/technologie" className="text-white hover:text-[#D9005B] transition-colors">Technologie</Link>
           <Link href="/report" className="text-white hover:text-[#D9005B] transition-colors">Nahlásit podvod</Link>
