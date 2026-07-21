@@ -22,6 +22,7 @@ export default function RegistrationForm({ onSuccess, editData, onCancelEdit }: 
   const [newPhotoUrl, setNewPhotoUrl] = useState('');
   const [newIsDemo, setNewIsDemo] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const isEditing = !!editData;
 
@@ -44,11 +45,12 @@ export default function RegistrationForm({ onSuccess, editData, onCancelEdit }: 
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMsg(null);
     if (!newDomain || !newName || !newId) return;
 
     setIsSubmitting(true);
     try {
-      await fetch('/api/advisors', {
+      const res = await fetch('/api/advisors', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -63,6 +65,11 @@ export default function RegistrationForm({ onSuccess, editData, onCancelEdit }: 
         })
       });
 
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Server error');
+      }
+
       // Vyresetujeme formulář po úspěšném odeslání, pokud neupravujeme
       if (!isEditing) {
         setNewDomain('');
@@ -73,8 +80,9 @@ export default function RegistrationForm({ onSuccess, editData, onCancelEdit }: 
       }
       
       onSuccess(); // Obnoví data v rodiči
-    } catch (error) {
+    } catch (error: any) {
       console.error('Chyba při ukládání:', error);
+      setErrorMsg(error.message || 'Při ukládání došlo k chybě.');
     } finally {
       setIsSubmitting(false);
     }
@@ -85,6 +93,13 @@ export default function RegistrationForm({ onSuccess, editData, onCancelEdit }: 
       <h2 className="text-xl font-bold flex items-center gap-2 mb-6">
         <Plus className="text-[#D9005B]" /> {isEditing ? 'Úprava domény' : 'Registrace domény'}
       </h2>
+      
+      {errorMsg && (
+        <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-3 rounded-xl text-sm font-medium mb-6">
+          {errorMsg}
+        </div>
+      )}
+
       <form onSubmit={handleRegister} className="space-y-4">
         <div>
           <label className="block text-xs font-semibold text-[#888888] uppercase tracking-wider mb-2">Doména (bez https://)</label>

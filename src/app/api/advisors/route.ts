@@ -27,7 +27,7 @@ export async function POST(request: Request) {
       id: z.string().min(1).max(50),
       name: z.string().min(2).max(100),
       role: z.string().max(100).optional(),
-      photoUrl: z.string().url().max(500).optional().or(z.literal('')),
+      photoUrl: z.string().optional().or(z.literal('')),
       email: z.string().email().max(100).optional().or(z.literal('')),
       phone: z.string().max(20).optional().or(z.literal('')),
       isDemo: z.boolean().optional(),
