@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { ShieldAlert, Activity, Server, Plus, AlertOctagon, CheckCircle2, RefreshCw, Mail, Lock, Key, User, Loader2, Trash2, Edit3, Shield, Users } from 'lucide-react';
+import { ShieldAlert, Activity, Server, Plus, AlertOctagon, CheckCircle2, RefreshCw, Mail, Lock, Key, User, Loader2, Trash2, Edit3, Shield, Users, Download, Upload } from 'lucide-react';
 import UsersTab from '@/components/admin/UsersTab';
 import LogsTab from '@/components/admin/LogsTab';
 import AnalyticsChart from '@/components/admin/AnalyticsChart';
@@ -43,6 +43,12 @@ export default function AdminDashboard() {
   const [advisorSearch, setAdvisorSearch] = useState('');
   const [advisorPage, setAdvisorPage] = useState(1);
   const ADVISORS_PER_PAGE = 20;
+
+  // Threats Pagination
+  const [threatsPage, setThreatsPage] = useState(1);
+  const THREATS_PER_PAGE = 10;
+  const totalThreatPages = Math.ceil(threats.length / THREATS_PER_PAGE) || 1;
+  const paginatedThreats = threats.slice((threatsPage - 1) * THREATS_PER_PAGE, threatsPage * THREATS_PER_PAGE);
 
   const advisorEntries = Object.entries(advisors);
   const filteredAdvisors = advisorEntries.filter(([domain, advisor]: any) => 
@@ -143,6 +149,76 @@ export default function AdminDashboard() {
     } finally {
       setIsInitialCheck(false);
       if (showLoading) setIsLoading(false);
+    }
+  };
+
+  const exportToCSV = () => {
+    const csvRows = ["Doména,Jméno,IČO,Email,Telefon,Je_Demo"];
+    Object.entries(advisors).forEach(([domain, a]: any) => {
+      // Obalíme do uvozovek pro případné čárky
+      csvRows.push(`"${domain}","${a.name}","${a.id}","${a.email || ''}","${a.phone || ''}","${a.isDemo || false}"`);
+    });
+    const csvContent = "data:text/csv;charset=utf-8," + csvRows.join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `inflexion_verified_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const [isImporting, setIsImporting] = useState(false);
+  const handleImportCSV = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setIsImporting(true);
+    try {
+      const text = await file.text();
+      const rows = text.split('\n').map(row => row.trim()).filter(row => row);
+      if (rows.length < 2) throw new Error('Soubor je prázdný nebo nemá hlavičku.');
+      
+      const parsedAdvisors = [];
+      for (let i = 1; i < rows.length; i++) { // Přeskočíme hlavičku
+        // Regex pro parsování CSV (bere v potaz uvozovky)
+        const match = rows[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
+        if (!match) continue;
+        const cols = match.map(c => c.replace(/^"|"$/g, '').trim());
+        
+        if (cols.length >= 3) {
+          parsedAdvisors.push({
+            domain: cols[0],
+            name: cols[1],
+            id: cols[2],
+            email: cols[3] || '',
+            phone: cols[4] || '',
+            isDemo: cols[5] === 'true'
+          });
+        }
+      }
+
+      if (parsedAdvisors.length === 0) throw new Error('Nebyla nalezena žádná platná data.');
+      
+      const res = await fetch('/api/advisors/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(parsedAdvisors)
+      });
+      
+      if (!res.ok) {
+        const d = await res.json();
+        throw new Error(d.error || 'Chyba při importu');
+      }
+      
+      alert(`Import úspěšný. Načteno ${parsedAdvisors.length} záznamů.`);
+      fetchData(true);
+    } catch (err: any) {
+      alert('Chyba při importu CSV: ' + err.message);
+    } finally {
+      setIsImporting(false);
+      // Reset inputu aby šlo znovu nahrát stejný soubor
+      e.target.value = '';
     }
   };
 
@@ -379,7 +455,7 @@ export default function AdminDashboard() {
                         <td colSpan={5} className="p-8 text-center text-[#888888]">Žádné zaznamenané hrozby.</td>
                       </tr>
                     )}
-                    {threats.map(threat => (
+                    {paginatedThreats.map(threat => (
                       <tr key={threat.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
                         <td className="p-4 text-[#888888] font-mono text-xs">{new Date(threat.timestamp).toLocaleTimeString()}</td>
                         <td className="p-4">
@@ -405,14 +481,53 @@ export default function AdminDashboard() {
                   </tbody>
                 </table>
               </div>
+              {threats.length > 0 && (
+                <div className="p-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[#888888] bg-black/20">
+                  <div>Zobrazeno {paginatedThreats.length} z {threats.length} hrozeb</div>
+                  <div className="flex gap-2">
+                    <button 
+                      disabled={threatsPage === 1} 
+                      onClick={() => setThreatsPage(p => p - 1)}
+                      className="px-3 py-1.5 bg-white/5 rounded-lg disabled:opacity-50 hover:bg-white/10 transition-colors"
+                    >Předchozí</button>
+                    <span className="px-3 py-1.5 font-medium">Stránka {threatsPage} z {totalThreatPages}</span>
+                    <button 
+                      disabled={threatsPage === totalThreatPages} 
+                      onClick={() => setThreatsPage(p => p + 1)}
+                      className="px-3 py-1.5 bg-white/5 rounded-lg disabled:opacity-50 hover:bg-white/10 transition-colors"
+                    >Další</button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Whitelist Table */}
             <div className="glass-panel overflow-hidden flex flex-col mt-8">
               <div className="p-6 border-b border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <h2 className="text-xl font-bold flex items-center gap-2">
-                  <Server className="text-emerald-400" /> Whitelist (Aktivní domény)
-                </h2>
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+                  <h2 className="text-xl font-bold flex items-center gap-2">
+                    <Server className="text-emerald-400" /> Whitelist (Aktivní domény)
+                  </h2>
+                  <div className="flex items-center gap-2 text-sm font-medium">
+                    <button 
+                      onClick={exportToCSV}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 text-[#888888] hover:text-white rounded-lg transition-colors border border-white/5"
+                    >
+                      <Download size={16} /> Export CSV
+                    </button>
+                    <label className={`flex items-center gap-1.5 px-3 py-1.5 bg-[#D9005B]/10 hover:bg-[#D9005B]/20 text-[#D9005B] rounded-lg transition-colors border border-[#D9005B]/20 cursor-pointer ${isImporting ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                      {isImporting ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
+                      {isImporting ? 'Importuji...' : 'Import CSV'}
+                      <input 
+                        type="file" 
+                        accept=".csv" 
+                        className="hidden" 
+                        onChange={handleImportCSV} 
+                        disabled={isImporting}
+                      />
+                    </label>
+                  </div>
+                </div>
                 <input 
                   type="text" 
                   placeholder="Hledat doménu, jméno nebo IČO..." 

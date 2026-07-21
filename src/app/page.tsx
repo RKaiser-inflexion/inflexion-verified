@@ -4,6 +4,8 @@ import { ShieldCheck, Database, Users, AlertOctagon, ChevronRight } from 'lucide
 import Link from 'next/link';
 import SearchBar from '@/components/SearchBar';
 
+export const revalidate = 60; // ISR cache - revalidates every 60 seconds
+
 export default async function Home() {
   const advisorsData = await getAdvisors();
   const threatsData = await getThreats();

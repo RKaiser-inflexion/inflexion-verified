@@ -16,6 +16,8 @@ model Advisor {
   email    String
   phone    String
   isDemo   Boolean @default(false)
+  
+  @@index([name])
 }
 
 model Threat {

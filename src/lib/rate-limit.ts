@@ -22,14 +22,15 @@ const store = new Map<string, RateLimitInfo>();
 export async function checkApiRateLimit(
   ip: string,
   limit: number = 100,
-  windowMs: number = 60 * 1000
+  windowMs: number = 60 * 1000,
+  prefix: string = 'ratelimit'
 ): Promise<{ success: boolean; limit: number; remaining: number; resetTime: number }> {
   const now = Date.now();
   
   // REDIS PATH
   if (redis) {
     try {
-      const key = `ratelimit:${ip}`;
+      const key = `${prefix}:${ip}`;
       // Pipelining pro rychlost
       const p = redis.pipeline();
       p.incr(key);
@@ -56,9 +57,10 @@ export async function checkApiRateLimit(
   }
 
   // IN-MEMORY PATH (Fallback)
-  let info = store.get(ip);
+  const memKey = `${prefix}:${ip}`;
+  let info = store.get(memKey);
   if (info && info.resetTime < now) {
-    store.delete(ip);
+    store.delete(memKey);
     info = undefined;
   }
 
@@ -67,7 +69,7 @@ export async function checkApiRateLimit(
       count: 1,
       resetTime: now + windowMs,
     };
-    store.set(ip, info);
+    store.set(memKey, info);
     return {
       success: true,
       limit,
@@ -77,7 +79,7 @@ export async function checkApiRateLimit(
   }
 
   info.count += 1;
-  store.set(ip, info);
+  store.set(memKey, info);
 
   return {
     success: info.count <= limit,
