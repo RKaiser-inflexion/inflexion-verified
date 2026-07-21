@@ -31,6 +31,7 @@ export default function AdminDashboard() {
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [isInitialCheck, setIsInitialCheck] = useState(true);
   const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'logs'>('dashboard');
 
   // --- DASHBOARD STATE ---
@@ -138,6 +139,7 @@ export default function AdminDashboard() {
     } catch (e) {
       console.error(e);
     } finally {
+      setIsInitialCheck(false);
       if (showLoading) setIsLoading(false);
     }
   };
@@ -173,11 +175,16 @@ export default function AdminDashboard() {
   // ---------------------------------------------
   // LOGIN SCREEN
   // ---------------------------------------------
+  if (isInitialCheck) {
+    return <div className="min-h-screen bg-[#020202] text-white flex items-center justify-center relative overflow-hidden font-sans">
+      <Loader2 className="animate-spin text-[#D9005B]" size={40} />
+    </div>;
+  }
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-[#020202] text-white flex items-center justify-center relative overflow-hidden font-sans">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#D9005B]/10 rounded-full blur-[120px] pointer-events-none"></div>
-        
+        {/* Odstraněno: těžké rozmazání */}
         <div className="max-w-md w-full mx-auto relative z-10 p-6">
           <div className="text-center mb-10">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-[#D9005B]/10 rounded-3xl border border-[#D9005B]/30 mb-6 shadow-[0_0_40px_rgba(217,0,91,0.2)]">
@@ -256,9 +263,7 @@ export default function AdminDashboard() {
   // ---------------------------------------------
   return (
     <div className="min-h-screen bg-[#020202] text-white p-6 md:p-12 relative overflow-hidden font-sans animate-in fade-in duration-1000">
-      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#D9005B]/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-red-500/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
-
+      {/* Odstraněno: extrémně náročné blur-[120px] a blur-[100px] na pozadí */}
       <div className="max-w-7xl mx-auto relative z-10">
         
         {/* Header */}
