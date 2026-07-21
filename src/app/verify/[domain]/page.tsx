@@ -58,7 +58,7 @@ export default async function VerifyPage({ params }: { params: { domain: string 
               )}
               <p className="text-[#D9005B] font-medium text-lg mb-4">{advisor.role}</p>
               <div className="space-y-2 text-[#888888]">
-                <p><strong className="text-[#f0f0f0]">ID:</strong> {advisor.id}</p>
+                <p><strong className="text-[#f0f0f0]">IČO:</strong> {advisor.id}</p>
                 <p><strong className="text-[#f0f0f0]">Telefon:</strong> {advisor.phone}</p>
                 <p><strong className="text-[#f0f0f0]">E-mail:</strong> {advisor.email}</p>
                 <p><strong className="text-[#f0f0f0]">Ověřený web:</strong> <a href={`https://${cleanDomain}`} className="text-[#D9005B] hover:underline hover:text-pink-400 transition-colors">{cleanDomain}</a></p>

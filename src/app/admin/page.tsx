@@ -415,7 +415,7 @@ export default function AdminDashboard() {
                 </h2>
                 <input 
                   type="text" 
-                  placeholder="Hledat doménu, jméno nebo ID..." 
+                  placeholder="Hledat doménu, jméno nebo IČO..." 
                   value={advisorSearch}
                   onChange={e => { setAdvisorSearch(e.target.value); setAdvisorPage(1); }}
                   className="bg-black/50 border border-white/10 rounded-lg px-4 py-2 text-sm outline-none focus:border-[#D9005B] w-full md:w-64"
@@ -427,7 +427,7 @@ export default function AdminDashboard() {
                     <tr className="bg-white/5 text-xs uppercase tracking-widest text-[#888888]">
                       <th className="p-4 font-semibold">Doména</th>
                       <th className="p-4 font-semibold">Jméno poradce</th>
-                      <th className="p-4 font-semibold">ID (4fin)</th>
+                      <th className="p-4 font-semibold">IČO</th>
                       <th className="p-4 font-semibold text-right">Akce</th>
                     </tr>
                   </thead>

@@ -137,14 +137,14 @@ export default function RegistrationForm({ onSuccess, editData, onCancelEdit }: 
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[#888888] uppercase tracking-wider mb-2">Registrační číslo u ČNB</label>
+            <label className="block text-xs font-semibold text-[#888888] uppercase tracking-wider mb-2">IČO</label>
             <input 
               type="text" 
               required
               value={newId}
               onChange={e => setNewId(e.target.value)}
               disabled={isSubmitting}
-              placeholder="např. PPZ 123456" 
+              placeholder="např. 12345678" 
               className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D9005B] focus:ring-1 focus:ring-[#D9005B] outline-none text-white transition-all disabled:opacity-50"
             />
           </div>
