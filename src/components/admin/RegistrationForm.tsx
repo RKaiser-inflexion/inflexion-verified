@@ -10,6 +10,8 @@ interface RegistrationFormProps {
     name: string;
     id: string;
     photoUrl?: string;
+    email?: string;
+    phone?: string;
     isDemo: boolean;
   } | null;
   onCancelEdit?: () => void;
@@ -20,6 +22,8 @@ export default function RegistrationForm({ onSuccess, editData, onCancelEdit }: 
   const [newName, setNewName] = useState('');
   const [newId, setNewId] = useState('');
   const [newPhotoUrl, setNewPhotoUrl] = useState('');
+  const [newEmail, setNewEmail] = useState('');
+  const [newPhone, setNewPhone] = useState('');
   const [newIsDemo, setNewIsDemo] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -33,12 +37,16 @@ export default function RegistrationForm({ onSuccess, editData, onCancelEdit }: 
       setNewName(editData.name);
       setNewId(editData.id);
       setNewPhotoUrl(editData.photoUrl || '');
+      setNewEmail(editData.email || '');
+      setNewPhone(editData.phone || '');
       setNewIsDemo(editData.isDemo || false);
     } else {
       setNewDomain('');
       setNewName('');
       setNewId('');
       setNewPhotoUrl('');
+      setNewEmail('');
+      setNewPhone('');
       setNewIsDemo(false);
     }
   }, [editData]);
@@ -59,8 +67,8 @@ export default function RegistrationForm({ onSuccess, editData, onCancelEdit }: 
           name: newName,
           role: 'Vázaný zástupce 4fin',
           photoUrl: newPhotoUrl || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80',
-          email: `${newName.split(' ')[0].toLowerCase()}@4fin.cz`,
-          phone: '+420 000 000 000',
+          email: newEmail,
+          phone: newPhone,
           isDemo: newIsDemo
         })
       });
@@ -76,6 +84,8 @@ export default function RegistrationForm({ onSuccess, editData, onCancelEdit }: 
         setNewName('');
         setNewId('');
         setNewPhotoUrl('');
+        setNewEmail('');
+        setNewPhone('');
         setNewIsDemo(false);
       }
       
@@ -113,29 +123,56 @@ export default function RegistrationForm({ onSuccess, editData, onCancelEdit }: 
             className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D9005B] focus:ring-1 focus:ring-[#D9005B] outline-none text-white transition-all disabled:opacity-50"
           />
         </div>
-        <div>
-          <label className="block text-xs font-semibold text-[#888888] uppercase tracking-wider mb-2">Jméno poradce</label>
-          <input 
-            type="text" 
-            required
-            value={newName}
-            onChange={e => setNewName(e.target.value)}
-            disabled={isSubmitting}
-            placeholder="např. Jan Novák" 
-            className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D9005B] focus:ring-1 focus:ring-[#D9005B] outline-none text-white transition-all"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-semibold text-[#888888] uppercase tracking-wider mb-2">Jméno a příjmení</label>
+            <input 
+              type="text" 
+              required
+              value={newName}
+              onChange={e => setNewName(e.target.value)}
+              disabled={isSubmitting}
+              placeholder="např. Jan Novák" 
+              className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D9005B] focus:ring-1 focus:ring-[#D9005B] outline-none text-white transition-all disabled:opacity-50"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-[#888888] uppercase tracking-wider mb-2">Registrační číslo u ČNB</label>
+            <input 
+              type="text" 
+              required
+              value={newId}
+              onChange={e => setNewId(e.target.value)}
+              disabled={isSubmitting}
+              placeholder="např. PPZ 123456" 
+              className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D9005B] focus:ring-1 focus:ring-[#D9005B] outline-none text-white transition-all disabled:opacity-50"
+            />
+          </div>
         </div>
-        <div>
-          <label className="block text-xs font-semibold text-[#888888] uppercase tracking-wider mb-2">ID poradce (4fin)</label>
-          <input 
-            type="text" 
-            required
-            value={newId}
-            onChange={e => setNewId(e.target.value)}
-            disabled={isSubmitting}
-            placeholder="např. 4F-12345" 
-            className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D9005B] focus:ring-1 focus:ring-[#D9005B] outline-none text-white transition-all"
-          />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-semibold text-[#888888] uppercase tracking-wider mb-2">E-mail</label>
+            <input 
+              type="email" 
+              value={newEmail}
+              onChange={e => setNewEmail(e.target.value)}
+              disabled={isSubmitting}
+              placeholder="např. jan.novak@4fin.cz" 
+              className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D9005B] focus:ring-1 focus:ring-[#D9005B] outline-none text-white transition-all disabled:opacity-50"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-[#888888] uppercase tracking-wider mb-2">Telefon</label>
+            <input 
+              type="text" 
+              value={newPhone}
+              onChange={e => setNewPhone(e.target.value)}
+              disabled={isSubmitting}
+              placeholder="např. +420 123 456 789" 
+              className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D9005B] focus:ring-1 focus:ring-[#D9005B] outline-none text-white transition-all disabled:opacity-50"
+            />
+          </div>
         </div>
         <div>
           <label className="block text-xs font-semibold text-[#888888] uppercase tracking-wider mb-2">Profilová fotka</label>
