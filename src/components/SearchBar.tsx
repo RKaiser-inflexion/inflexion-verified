@@ -38,21 +38,23 @@ export default function SearchBar({ advisors }: { advisors: AdvisorInfo[] }) {
   return (
     <div className="relative group w-full max-w-2xl mx-auto z-50">
       <div className="absolute inset-0 bg-[#D9005B] rounded-2xl blur opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
-      <form onSubmit={handleSearch} className="relative glass-panel !p-2 !pl-6 !rounded-2xl flex items-center shadow-2xl">
-        <Search className="text-gray-500 mr-3 shrink-0" size={24} />
-        <input 
-          type="text" 
-          value={query}
-          onChange={(e) => {
-            setQuery(e.target.value);
-            setShowDropdown(true);
-          }}
-          onFocus={() => setShowDropdown(true)}
-          onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
-          placeholder="Hledat poradce nebo webovou doménu (např. Jan Novák)..." 
-          className="bg-transparent border-none outline-none flex-1 text-white placeholder-gray-500 text-base sm:text-lg py-3 w-full"
-        />
-        <button type="submit" className="bg-[#D9005B] hover:bg-[#b0004a] text-white px-6 py-3 rounded-xl font-semibold transition-colors duration-200 shrink-0">
+      <form onSubmit={handleSearch} className="relative glass-panel !p-2 sm:!pl-6 !rounded-2xl flex flex-col sm:flex-row items-center shadow-2xl gap-2 sm:gap-0">
+        <div className="flex items-center w-full sm:w-auto flex-1 px-2 sm:px-0">
+          <Search className="text-gray-500 mr-3 shrink-0" size={20} />
+          <input 
+            type="text" 
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setShowDropdown(true);
+            }}
+            onFocus={() => setShowDropdown(true)}
+            onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+            placeholder="Hledat poradce nebo webovou doménu..." 
+            className="bg-transparent border-none outline-none flex-1 text-white placeholder-gray-500 text-sm sm:text-lg py-2 w-full"
+          />
+        </div>
+        <button type="submit" className="w-full sm:w-auto bg-[#D9005B] hover:bg-[#b0004a] text-white px-6 py-3 rounded-xl font-semibold transition-colors duration-200 shrink-0 text-sm sm:text-base">
           Ověřit
         </button>
       </form>

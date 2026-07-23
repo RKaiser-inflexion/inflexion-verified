@@ -18,7 +18,7 @@ export default async function Home() {
   const uniqueAdvisorsCount = new Set(realAdvisors.map(([_, adv]) => adv.id)).size;
 
   return (
-    <main className="w-full">
+    <main className="w-full flex-1">
       
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-20 pb-24">
