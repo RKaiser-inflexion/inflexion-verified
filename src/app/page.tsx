@@ -3,6 +3,7 @@ import { getAdvisors, getThreats } from '@/lib/db';
 import { ShieldCheck, Database, Users, AlertOctagon, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import SearchBar from '@/components/SearchBar';
+import AdvisorList from '@/components/AdvisorList';
 
 export const revalidate = 60; // ISR cache - revalidates every 60 seconds
 
@@ -70,51 +71,15 @@ export default async function Home() {
       </section>
 
       {/* Directory Listing */}
-      <section className="py-24 max-w-6xl mx-auto px-6">
-        <div className="flex justify-between items-end mb-10">
-          <div>
-            <h2 className="text-white mb-2">Nedávno ověřené profily</h2>
-            <p className="text-[#888888]">Live výpis z chráněné sítě Inflexion Verified</p>
-          </div>
-          <button className="text-[#D9005B] hover:text-[#b0004a] font-medium flex items-center gap-1 transition-colors">
-            Zobrazit všechny <ChevronRight size={18} />
-          </button>
-        </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {allAdvisorsList.map(([domain, advisor]) => (
-            <Link href={`/verify/${domain}`} key={domain} className="block">
-              <div className="glass-card p-6 h-full relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#D9005B]/5 blur-[50px] group-hover:bg-[#D9005B]/15 transition-colors"></div>
-                
-                <div className="flex items-center gap-4 mb-5 relative z-10">
-                  <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-white/10 group-hover:border-[#D9005B]/50 transition-colors">
-                    <img src={advisor.photoUrl} alt={advisor.name} className="w-full h-full object-cover" />
-                  </div>
-                    <div>
-                      <h3 className="text-white font-bold text-xl leading-tight" style={{fontFamily: "'Geist Variable', 'Inter', sans-serif"}}>{advisor.name}</h3>
-                      <p className="text-[#D9005B] text-sm font-medium mt-1">
-                        {advisor.id}
-                        {advisor.isDemo && <span className="ml-2 text-[10px] uppercase font-bold bg-white/10 px-2 py-0.5 rounded text-[#888888]">Demo ukázka</span>}
-                      </p>
-                    </div>
-                </div>
-                
-                <div className="space-y-2 text-sm text-[#888888] relative z-10 pt-2 border-t border-white/5">
-                  <div className="flex justify-between">
-                    <span>Doména:</span>
-                    <span className="text-white">{domain}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Status:</span>
-                    <span className="text-[#D9005B] flex items-center gap-1"><ShieldCheck size={14} /> Ověřeno</span>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
+      <AdvisorList 
+        advisors={allAdvisorsList.map(([domain, advisor]) => ({
+          domain,
+          name: advisor.name,
+          id: advisor.id,
+          photoUrl: advisor.photoUrl,
+          isDemo: advisor.isDemo
+        }))} 
+      />
 
     </main>
   );
