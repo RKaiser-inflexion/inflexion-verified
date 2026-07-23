@@ -172,6 +172,7 @@ export default function UsersTab() {
                 <label className="block text-xs font-semibold text-[#888888] uppercase tracking-wider mb-2">Přihlašovací jméno</label>
                 <input 
                   type="text" required value={newUsername} onChange={e => setNewUsername(e.target.value)}
+                  autoComplete="off" data-lpignore="true" data-1p-ignore="true"
                   className="w-full bg-black/50 border border-white/10 rounded-xl py-3 px-4 outline-none transition-all placeholder:text-gray-600 focus:border-[#D9005B] focus:ring-1 focus:ring-[#D9005B] text-white"
                 />
               </div>
@@ -179,6 +180,7 @@ export default function UsersTab() {
                 <label className="block text-xs font-semibold text-[#888888] uppercase tracking-wider mb-2">Bezpečnostní heslo</label>
                 <input 
                   type="password" required value={newPassword} onChange={e => setNewPassword(e.target.value)}
+                  autoComplete="new-password" data-lpignore="true" data-1p-ignore="true"
                   className="w-full bg-black/50 border border-white/10 rounded-xl py-3 px-4 outline-none transition-all placeholder:text-gray-600 focus:border-[#D9005B] focus:ring-1 focus:ring-[#D9005B] text-white"
                 />
               </div>
