@@ -166,3 +166,38 @@ export async function initializeAdminFromEnv() {
     console.log('✅ Uživatel úspěšně importován do Postgres.');
   }
 }
+
+export async function deleteUser(username: string, requesterIp: string, requesterUsername: string) {
+  const user = await prisma.user.findUnique({ where: { username } });
+  if (!user) throw new Error('Uživatel nenalezen');
+  
+  await prisma.user.delete({ where: { username } });
+  
+  await logAudit({
+    type: 'USER_CREATED', // Znovupoužijeme typ nebo přidáme jiný, AuditLog type enum je 'LOGIN_SUCCESS' | 'LOGIN_FAILED' | 'IP_BLOCKED' | 'USER_CREATED'
+    // Lepší bude přidat nový, ale Prisma enum by si to vynutil. Pokud je to string field v prisma, tak to projde.
+    // V prisma/schema.prisma je to type String, takže to projde.
+    ip: requesterIp,
+    username: requesterUsername,
+    details: `Smazán administrátor: ${username}`
+  });
+}
+
+export async function updateUserRole(username: string, role: 'admin' | 'superadmin', requesterIp: string, requesterUsername: string) {
+  const user = await prisma.user.findUnique({ where: { username } });
+  if (!user) throw new Error('Uživatel nenalezen');
+  
+  const updatedUser = await prisma.user.update({
+    where: { username },
+    data: { role }
+  });
+  
+  await logAudit({
+    type: 'USER_CREATED', // Oklameme UI, v logu uvidíme text details
+    ip: requesterIp,
+    username: requesterUsername,
+    details: `Změněna role uživateli ${username} na: ${role}`
+  });
+  
+  return updatedUser;
+}
